@@ -6,12 +6,31 @@ require 'vendor/autoload.php';
 use GuzzleHttp\Client;
 use Dotenv\Dotenv;
 
+// Check if .env file exists, and if not, run setup script
+if (!file_exists(__DIR__ . '/.env')) {
+    echo "The .env file is missing. Running setup to generate it...\n";
+    setupEnv();
+}
+
 // Load environment variables from .env file
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-if ( ! isset( $_ENV['HELPSCOUT_CLIENT_ID'] ) || ! isset( $_ENV['HELPSCOUT_CLIENT_SECRET'] ) ) {
-    exit("You must define environment variable to connect to HelpScout\n");
+if (!isset($_ENV['HELPSCOUT_CLIENT_ID']) || !isset($_ENV['HELPSCOUT_CLIENT_SECRET'])) {
+    exit("You must define environment variables to connect to HelpScout\n");
+}
+
+// Function to set up the .env file interactively
+function setupEnv() {
+    echo "Setting up your .env file...\n";
+    $clientId = readline("Enter your HELPSCOUT_CLIENT_ID: ");
+    $clientSecret = readline("Enter your HELPSCOUT_CLIENT_SECRET: ");
+
+    $envContent = "HELPSCOUT_CLIENT_ID={$clientId}\nHELPSCOUT_CLIENT_SECRET={$clientSecret}\n";
+    file_put_contents(__DIR__ . '/.env', $envContent);
+
+    echo ".env file created successfully! Please rerun the script.\n";
+    exit();
 }
 
 // Function to get OAuth Access Token from HelpScout
