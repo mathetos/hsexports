@@ -93,7 +93,7 @@ function selectMailbox($accessToken) {
         throw new Exception("Invalid selection.");
     }
 
-    return $mailboxes[$selection - 1]['id'];
+    return $mailboxes[$selection - 1];
 }
 
 // Function to fetch tags
@@ -140,7 +140,7 @@ function fetchAndStreamConversations($startDate, $endDate, $accessToken, $filena
         
         if (isset($data['_embedded']['conversations'])) {
             foreach ($data['_embedded']['conversations'] as $conversation) {
-                if ($conversation['mailboxId'] != $selectedMailboxId) {
+                if ($conversation['mailboxId'] != $selectedMailboxId['id']) {
                     continue; // Skip conversations from other mailboxes
                 }
 
@@ -181,10 +181,10 @@ function main() {
     $accessToken = getAccessToken();
 
     // Prompt user to select a mailbox
-    $selectedMailboxId = selectMailbox($accessToken);
+    $selectedMailbox = selectMailbox($accessToken);
 
-    $filename = __DIR__ . '/export-' . $startDate . '-to-' . $endDate . '.csv';
-    fetchAndStreamConversations($startDate, $endDate, $accessToken, $filename, $selectedMailboxId);
+    $filename = __DIR__ . '/export-' . $startDate . '-to-' . $endDate . '-' . str_replace(' ', '-', strtolower($selectedMailbox['name'])) . '.csv';
+    fetchAndStreamConversations($startDate, $endDate, $accessToken, $filename, $selectedMailbox);
 }
 
 main();
