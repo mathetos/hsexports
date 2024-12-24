@@ -45,7 +45,7 @@ Contributions are welcome! Please fork this repository, create a new branch, and
 This project is released under the Creative Commons Zero v1.0 Universal (CC0 1.0) license. You can copy, modify, and distribute this work, even for commercial purposes, without asking permission.
 
 ## Acknowledgments
-This project wouldn't have been possible without @zbtirrell. When I had this problem, he solved it with the beginnings of this script. I've since heavily enhanced and improved it, but at the time I didn't even understand how powerful and helpful PHP CLI was. Thanks Zach!
+This project wouldn't have been possible without [@zbtirrell](https://github.com/zbtirrell). When I had this problem, he solved it with the beginnings of this script. I've since heavily enhanced and improved it, but at the time I didn't even understand how powerful and helpful PHP CLI was. Thanks Zach!
 
 
 
