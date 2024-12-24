@@ -101,18 +101,25 @@ function selectMailbox($accessToken) {
     }
 
     $mailboxes = $data['_embedded']['mailboxes'];
+
+    // Add "All Mailboxes" as the first option
+    echo "1. All Mailboxes\n";
     foreach ($mailboxes as $index => $mailbox) {
-        echo ($index + 1) . ". " . $mailbox['name'] . " (ID: " . $mailbox['id'] . ")\n";
+        echo ($index + 2) . ". " . $mailbox['name'] . " (ID: " . $mailbox['id'] . ")\n";
     }
 
     echo "Select a mailbox by number: ";
     $selection = trim(fgets(STDIN));
 
-    if (!is_numeric($selection) || $selection < 1 || $selection > count($mailboxes)) {
+    if (!is_numeric($selection) || $selection < 1 || $selection > (count($mailboxes) + 1)) {
         throw new Exception("Invalid selection.");
     }
 
-    return $mailboxes[$selection - 1];
+    if ($selection == 1) {
+        return 'all'; // Special value for all mailboxes
+    }
+
+    return $mailboxes[$selection - 2];
 }
 
 // Function to fetch tags
@@ -159,8 +166,14 @@ function fetchAndStreamConversations($startDate, $endDate, $accessToken, $filena
         
         if (isset($data['_embedded']['conversations'])) {
             foreach ($data['_embedded']['conversations'] as $conversation) {
-                if ($conversation['mailboxId'] != $selectedMailboxId['id']) {
+                if ($selectedMailboxId !== 'all' && $conversation['mailboxId'] != $selectedMailboxId['id']) {
                     continue; // Skip conversations from other mailboxes
+                }
+
+                // Exclude conversations tagged as "spam" or "discard"
+                $tags = array_map('strtolower', $conversation['tags'] ?? []);
+                if (in_array('spam', $tags) || in_array('discard', $tags)) {
+                    continue;
                 }
 
                 $createdAt = $conversation['_embedded']['threads'][0]['createdAt'] ?? $conversation['createdAt'] ?? '';
@@ -205,7 +218,7 @@ function main() {
     // Prompt user to select a mailbox
     $selectedMailbox = selectMailbox($accessToken);
 
-    $filename = __DIR__ . '/export-' . $startDate . '-to-' . $endDate . '-' . str_replace(' ', '-', strtolower($selectedMailbox['name'])) . '.csv';
+    $filename = __DIR__ . '/export-' . $startDate . '-to-' . $endDate . '-' . ($selectedMailbox === 'all' ? 'all-mailboxes' : str_replace(' ', '-', strtolower($selectedMailbox['name']))) . '.csv';
     fetchAndStreamConversations($startDate, $endDate, $accessToken, $filename, $selectedMailbox);
 }
 
