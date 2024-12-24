@@ -171,7 +171,12 @@ function fetchAndStreamConversations($startDate, $endDate, $accessToken, $filena
                 }
 
                 // Exclude conversations tagged as "spam" or "discard"
-                $tags = array_map('strtolower', $conversation['tags'] ?? []);
+                $tags = [];
+                if (isset($conversation['tags']) && is_array($conversation['tags'])) {
+                    $tags = array_map(function ($tag) {
+                        return is_string($tag) ? strtolower($tag) : '';
+                    }, $conversation['tags']);
+                }
                 if (in_array('spam', $tags) || in_array('discard', $tags)) {
                     continue;
                 }
