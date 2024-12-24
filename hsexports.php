@@ -163,6 +163,8 @@ function fetchAndStreamConversations($startDate, $endDate, $accessToken, $filena
                     continue; // Skip conversations from other mailboxes
                 }
 
+                $createdAt = $conversation['_embedded']['threads'][0]['createdAt'] ?? $conversation['createdAt'] ?? '';
+
                 $ticket = [
                     'id' => $conversation['id'],
                     'mailbox' => $conversation['mailboxId'],
@@ -171,6 +173,7 @@ function fetchAndStreamConversations($startDate, $endDate, $accessToken, $filena
                     'email' => $conversation['primaryCustomer']['email'] ?? '',
                     'ticket' => $conversation['_links']['web']['href'] ?? '',
                     'tags' => fetchTags($conversation),
+                    'date_received' => $createdAt,
                     'initial_message' => $conversation['_embedded']['threads'][0]['body'] ?? '',
                 ];
 
