@@ -37,6 +37,7 @@ The script will now run and export your conversations to a local .csv file with 
 
 ## **Tips**
 1. The Helpscout API is slow and because we're including the initial message in the export, it can be a serious memory hog. So I recommend exporting one month at a time, or even one week at a time depending on the size of your inbox. 
+2. I've included a file called `accesstoken.php` for troubleshooting purposes. If you want to test a query against the Helpscout API using cURL, knowing your current access token is crucial. Simply run the file and you'll get your access token in the Terminal. 
 
 ## **Contributing**
 Contributions are welcome! Please fork this repository, create a new branch, and submit a pull request.
